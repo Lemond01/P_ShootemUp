@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 180165198}
   - component: {fileID: 180165200}
   - component: {fileID: 180165199}
+  - component: {fileID: 180165201}
   m_Layer: 5
   m_Name: Menu
   m_TagString: Untagged
@@ -196,6 +197,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 180165197}
   m_CullTransparentMesh: 1
+--- !u!114 &180165201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180165197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72ebe88d23fc3cb4b87fbc9c2438c224, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &203844586
 GameObject:
   m_ObjectHideFlags: 0
@@ -330,7 +343,7 @@ GameObject:
   - component: {fileID: 243237105}
   - component: {fileID: 243237104}
   m_Layer: 5
-  m_Name: Button
+  m_Name: B_Play
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -399,7 +412,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 243237105}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 180165201}
+        m_TargetAssemblyTypeName: MenuSystem, Assembly-CSharp
+        m_MethodName: PlayGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &243237105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -451,7 +476,7 @@ GameObject:
   - component: {fileID: 472813139}
   - component: {fileID: 472813138}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: B_Quit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -520,7 +545,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 472813139}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 180165201}
+        m_TargetAssemblyTypeName: MenuSystem, Assembly-CSharp
+        m_MethodName: Exit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &472813139
 MonoBehaviour:
   m_ObjectHideFlags: 0
