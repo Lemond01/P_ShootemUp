@@ -1,27 +1,46 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Camera))]
 public class CameraFollow : MonoBehaviour
 {
-    public Transform target;            // player
-    public float followDistance = 12f;  // distancia atrás
-    public float height = 6f;           // altura
+    public Transform target;      // arrastra aquí el Player
+    public float height = 20f;    // Y de la cámara (fija)
     public float smoothTime = 0.12f;
+
+    // Limites del nivel en X,Z (ajusta según tu nivel)
+    public Vector2 levelMin = new Vector2(-50f, -50f); // xMin, zMin
+    public Vector2 levelMax = new Vector2(50f, 200f);  // xMax, zMax
+
+    private Camera cam;
     private Vector3 velocity = Vector3.zero;
-    public Vector3 lookOffset = new Vector3(0, 1.5f, 0); // donde mira la cámara respecto al target
+
+    void Start()
+    {
+        cam = GetComponent<Camera>();
+        // aseguramos ortográfica para topdown
+        cam.orthographic = true;
+    }
 
     void LateUpdate()
     {
         if (target == null) return;
 
-        // posición deseada: detrás del target en su forward, más algo de altura
-        Vector3 desiredPos = target.position - target.forward * followDistance + Vector3.up * height;
+        // Deseada: misma X/Z que target, Y fija
+        Vector3 desired = new Vector3(target.position.x, height, target.position.z);
 
-        // suavizado
-        transform.position = Vector3.SmoothDamp(transform.position, desiredPos, ref velocity, smoothTime);
+        // Calculamos los límites visibles de la cámara (extensiones)
+        float vertExtent = cam.orthographicSize;
+        float horzExtent = vertExtent * cam.aspect;
 
-        // mirar al objetivo ligeramente por encima del centro
-        Vector3 lookPoint = target.position + lookOffset;
-        transform.LookAt(lookPoint);
+        // Clamp para que cámara no salga del nivel (así el player no queda fuera)
+        float clampedX = Mathf.Clamp(desired.x, levelMin.x + horzExtent, levelMax.x - horzExtent);
+        float clampedZ = Mathf.Clamp(desired.z, levelMin.y + vertExtent, levelMax.y - vertExtent);
+
+        Vector3 clamped = new Vector3(clampedX, desired.y, clampedZ);
+
+        // Suavizamos el movimiento
+        transform.position = Vector3.SmoothDamp(transform.position, clamped, ref velocity, smoothTime);
     }
 }
+
 
