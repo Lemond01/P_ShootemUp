@@ -2,50 +2,65 @@ using UnityEngine;
 
 public class ParallaxRepeater : MonoBehaviour
 {
-    public Camera cam;                  // cámara ortográfica
-    public Transform planeA;
-    public Transform planeB;
-    public float planeLength = 60f;     // tamaño efectivo en Z de cada plano (ajusta con el scale)
-    public float parallaxFactor = 0.6f; // 0 = no se mueve, 1 = se mueve con la cámara
-    private Vector3 lastCamPos;
+    [Header("Configuración")]
+    [SerializeField] private Sprite sprite;   // Imagen que arrastras
+    [SerializeField] private float speed = 2f; // Velocidad del parallax
+    [SerializeField] private Camera mainCamera;
 
-    void Start()
+    private GameObject image1;
+    private GameObject image2;
+    private float spriteWidth;
+
+    private void Start()
     {
-        if (cam == null) cam = Camera.main;
-        lastCamPos = cam.transform.position;
+        if (mainCamera == null)
+            mainCamera = Camera.main;
+
+        // Crear dos imágenes con el sprite
+        image1 = CreateImage("Image1", Vector3.zero);
+        image2 = CreateImage("Image2", new Vector3(sprite.bounds.size.x, 0, 0));
+
+        spriteWidth = sprite.bounds.size.x;
     }
 
-    void Update()
+    private void Update()
     {
-        Vector3 camPos = cam.transform.position;
-        Vector3 delta = camPos - lastCamPos;
+        // Mover en la dirección local del padre (izquierda local)
+        Vector3 localLeft = transform.TransformDirection(Vector3.left);
 
-        // Parallax: movemos ligeramente los planos según el movimiento de la cámara
-        Vector3 parallaxMove = new Vector3(delta.x * parallaxFactor, 0f, delta.z * parallaxFactor);
-        planeA.position += parallaxMove;
-        planeB.position += parallaxMove;
+        image1.transform.position += localLeft * speed * Time.deltaTime;
+        image2.transform.position += localLeft * speed * Time.deltaTime;
 
-        // Recycle en Z (para avance en Z+)
-        if (camPos.z - planeA.position.z > planeLength)
-        {
-            // A quedó demasiado atrás -> lo colocamos delante de B
-            planeA.position = new Vector3(planeA.position.x, planeA.position.y, planeB.position.z + planeLength);
-        }
-        else if (camPos.z - planeB.position.z > planeLength)
-        {
-            planeB.position = new Vector3(planeB.position.x, planeB.position.y, planeA.position.z + planeLength);
-        }
+        // Revisar visibilidad y reposicionar
+        CheckAndReposition(image1, image2);
+        CheckAndReposition(image2, image1);
+    }
 
-        // Recycle cuando vas hacia atrás (Z-)
-        if (planeA.position.z - camPos.z > planeLength)
-        {
-            planeA.position = new Vector3(planeA.position.x, planeA.position.y, planeB.position.z - planeLength);
-        }
-        else if (planeB.position.z - camPos.z > planeLength)
-        {
-            planeB.position = new Vector3(planeB.position.x, planeB.position.y, planeA.position.z - planeLength);
-        }
+    private GameObject CreateImage(string name, Vector3 localPosition)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.parent = transform;
+        go.transform.localPosition = localPosition;
+        go.transform.localRotation = Quaternion.identity;
+        go.transform.localScale = Vector3.one;
 
-        lastCamPos = camPos;
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = sprite;
+
+        return go;
+    }
+
+    private void CheckAndReposition(GameObject current, GameObject other)
+    {
+        // Revisar si el centro de la imagen ya salió por completo de la cámara
+        Vector3 viewPos = mainCamera.WorldToViewportPoint(current.transform.position);
+
+        if (viewPos.x < -1f) // salió por la izquierda
+        {
+            // Reposicionar usando el eje local del padre
+            Vector3 offset = transform.TransformDirection(Vector3.right) * spriteWidth;
+
+            current.transform.position = other.transform.position + offset;
+        }
     }
 }
