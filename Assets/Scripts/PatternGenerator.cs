@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,8 +15,12 @@ public class PatternGenerator : MonoBehaviour
 
     private List<Pattern> _patterns = new List<Pattern>();
 
+    [SerializeField]
     private List<EnemyRef> _enemiesList = new List<EnemyRef>();
-    private List<EnemyRef> _matchingPatterns = new List<EnemyRef>();
+    [SerializeField]
+    private List<EnemyRef> _matchingVariants = new List<EnemyRef>();
+    [SerializeField]
+    private List<EnemyRef> _matchingArrows = new List<EnemyRef>();
 
     private void Awake()
     {
@@ -50,71 +55,70 @@ public class PatternGenerator : MonoBehaviour
 
     public IEnumerator LookForMatches(Elements element, int index)
     {
+        Debug.Log(index);
         if(index == 0)
         {
             for (int i = 0; i < _enemiesList.Count; i++)
             {
-                //Debug.Log($"i: {i}, index: {index}, cnt: {_enemiesList.Count}");
-                //Debug.Log($"{_enemiesList[i]._pattern.arrows[index].ToString()}");
-
                 if (_enemiesList[i]._pattern.arrows[index] == element)
                 {
-                    //Debug.Log($"{index}, {_enemiesList[i]._pattern.arrows[index].ToString()}");
-                    //Debug.Log("Imagen correcta");
-
                     _enemiesList[i]._image.color = Color.white;
 
-                    _matchingPatterns.Add(_enemiesList[i]);
-
-                    //else
-                    //{
-                    //    Debug.Log("Flecha correcta");
-
-                    //    string c = "<color=red>" + _enemiesList[i]._text.textInfo.characterInfo[index - 1].character.ToString() + "</color>";
-
-                    //    _enemiesList[i]._text.text = c;
-                    //}
+                    _matchingVariants.Add(_enemiesList[i]);
                 }
-                //else
-                //{
-                //    _player.ClearArray();
-                //}
             }
 
             yield break;
         }
 
-        for(int i = 0; i < _matchingPatterns.Count; i++)
+        bool matches = false;
+
+        for (int i = 0; i < _matchingVariants.Count; i++)
         {
-            if (_matchingPatterns[i]._pattern.arrows[index] == element)
+            if (_matchingVariants[i]._pattern.arrows[index] == element)
             {
-                //Debug.Log("Flecha correcta");
+                HighlighText(_matchingVariants[i], index);
 
-                HighlighText(_matchingPatterns[i], index);
+                if (!_matchingArrows.Contains(_matchingVariants[i]))
+                    _matchingArrows.Add(_matchingVariants[i]);
 
-                Debug.Log($"{_matchingPatterns[i]._pattern.arrows.Length - 1} | {index}");
+                matches = true;
 
-                if (_matchingPatterns[i]._pattern.arrows.Length - 1 == index)
+                if (_matchingVariants[i]._pattern.arrows.Length - 1 == index)
                 {
-                    Debug.Log("patron completo");
+                    EnemyTest enemy = _matchingVariants[i]._enemy;
 
-                    EnemyTest enemy = _matchingPatterns[i]._enemy;
-                    
-                    _matchingPatterns.Remove(_matchingPatterns[i]);
+
+                    _enemiesList.Remove(_matchingVariants[i]);
+                    _matchingVariants.Remove(_matchingVariants[i]);
 
                     enemy.RemoveFromGame();
 
                     _player.ClearArray();
                 }
             }
-            //else
-            //{
-            //    ClearPattern(_matchingPatterns[i]);
-            //    _matchingPatterns.Remove(_matchingPatterns[i]);
-            //}
         }
 
+        if (!matches)
+            _player.ClearArray();
+
+        _matchingVariants = ExcludeElementsAndCleanItems(_matchingVariants, _matchingArrows);
+
+        _matchingArrows.Clear();
+
         yield break;
+    }
+
+    private List<EnemyRef> ExcludeElementsAndCleanItems(List<EnemyRef> originalList, List<EnemyRef> itemsToCompare)
+    {
+        List<EnemyRef> itemsToClean = originalList.Except(itemsToCompare).ToList();
+
+        foreach (EnemyRef item in itemsToClean)
+        {
+            ClearPattern(item);
+        }
+
+        return originalList.Intersect(itemsToCompare).ToList();
     }
 
     private void HighlighText(EnemyRef enemyRef, int index)
@@ -125,7 +129,6 @@ public class PatternGenerator : MonoBehaviour
         for (int i = 0; i < index; i++)
         {
             arrowsToHighlight[i] = enemyRef._text.textInfo.characterInfo[i].character;
-            //Debug.Log(enemyRef._text.textInfo.characterInfo[i].character);
         }
 
         for (int i = index; i < enemyRef._text.textInfo.characterCount; i++)

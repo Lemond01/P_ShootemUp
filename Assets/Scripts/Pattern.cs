@@ -13,5 +13,3 @@ public struct Pattern
 }
 
 public enum Elements { Red, Blue, Up, Right, Down, Left }
-
-public enum Variant { Red, Blue }
