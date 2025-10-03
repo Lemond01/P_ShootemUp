@@ -214,6 +214,7 @@ MonoBehaviour:
   playSound: {fileID: 8300000, guid: f1e78e96c3641c848a930caed7b77ad9, type: 3}
   exitSound: {fileID: 8300000, guid: a04397eaf12837c42872942174a7cba8, type: 3}
   audioSource: {fileID: 1013036561}
+  gameSceneName: S_UITest
 --- !u!1 &203844586
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,6 +11,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/SergioHdz/Scenes/S_UITest.unity
     guid: fd44e19f355f5fc42b971b26e6c52f66
+  - enabled: 1
+    path: Assets/SergioHdz/Scenes/S_Win.unity
+    guid: 278369253d5a0c44bb99ea46b4c881ff
+  - enabled: 1
+    path: Assets/SergioHdz/Scenes/S_Lose.unity
+    guid: 0bb2f517e62d6a1478256f7c969a4c9b
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
