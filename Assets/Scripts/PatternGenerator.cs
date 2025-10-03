@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,11 +88,18 @@ public class PatternGenerator : MonoBehaviour
                 {
                     EnemyTest enemy = _matchingVariants[i]._enemy;
 
+                    //  Obtener PlayerShooting y disparar al enemigo
+                    PlayerShooting playerShooting = FindObjectOfType<PlayerShooting>();
+                    if (playerShooting != null)
+                    {
+                        playerShooting.SetTargetAndShoot(_matchingVariants[i]);
+                    }
 
                     _enemiesList.Remove(_matchingVariants[i]);
                     _matchingVariants.Remove(_matchingVariants[i]);
 
-                    enemy.RemoveFromGame();
+                    // El enemigo se destruirá cuando la bala impacte
+                    // enemy.RemoveFromGame(); // ← Esto se moverá a la colisión
 
                     _player.ClearArray();
                 }

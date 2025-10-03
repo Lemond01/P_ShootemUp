@@ -7,6 +7,7 @@ public class EnemyTest : MonoBehaviour
     public Pattern enemyPattern;
     public TextMeshProUGUI txtArrows;
     public Image imgVariant;
+    public int health = 1;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -42,5 +43,14 @@ public class EnemyTest : MonoBehaviour
     public void RemoveFromGame()
     {
         Destroy(gameObject);
+    }
+
+    public void TakeDamage()
+    {
+        health--;
+        if (health <= 0)
+        {
+            RemoveFromGame();
+        }
     }
 }
