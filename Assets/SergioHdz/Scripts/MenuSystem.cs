@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
 public class MenuSystem : MonoBehaviour
@@ -10,8 +9,11 @@ public class MenuSystem : MonoBehaviour
     public AudioClip playSound;
     public AudioClip exitSound;
     public AudioSource audioSource;
-    
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    [Header("Scene Settings")]
+    [Tooltip("Nombre de la escena del juego que quieres cargar")]
+    public string gameSceneName;
+
     public void PlayGame()
     {
         StartCoroutine(PlayGameWithSound());
@@ -24,30 +26,32 @@ public class MenuSystem : MonoBehaviour
 
     private IEnumerator PlayGameWithSound()
     {
-        // Reproducir sonido si existe
         if (playSound != null && audioSource != null)
         {
             audioSource.PlayOneShot(playSound);
-            // Esperar a que termine el sonido
             yield return new WaitForSeconds(playSound.length);
         }
-        
-        // Cargar la siguiente escena
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+
+        if (!string.IsNullOrEmpty(gameSceneName))
+        {
+            SceneManager.LoadScene(gameSceneName);
+        }
+        else
+        {
+            Debug.LogError("⚠️ No se ha asignado el nombre de la escena en el inspector.");
+        }
     }
 
     private IEnumerator ExitWithSound()
     {
-        // Reproducir sonido si existe
         if (exitSound != null && audioSource != null)
         {
             audioSource.PlayOneShot(exitSound);
-            // Esperar a que termine el sonido
             yield return new WaitForSeconds(exitSound.length);
         }
-        
-        // Salir del juego
+
         Debug.Log("Exit Game...");
         Application.Quit();
     }
 }
+
