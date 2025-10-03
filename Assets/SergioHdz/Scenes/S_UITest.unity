@@ -2172,6 +2172,10 @@ PrefabInstance:
       value: DualStriker_Player
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 24b90fd8abe40f040985c55cf55ee917, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 24b90fd8abe40f040985c55cf55ee917, type: 3}
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
